@@ -84,7 +84,7 @@ constexpr double dth { Rdth/R0 }; /* Angle making a cell */
 constexpr int Nr { int(Rr/dr) };  /* Cell number in r */
 constexpr int Nth { int(Rth/Rdth) }; /* Cell number in theta */ /*Nth=2000, Rth=1000.0e3, Rdth=0.5e3*/
 
-constexpr double Dt { 0.9 / C0 / sqrt( 1/(dr*dr) + 1/((R0*dth)*(R0*dth)) ) }; //0.999
+constexpr double Dt { 0.9 / C0 / sqrt( 1/(dr*dr) + 1/((R0*dth)*(R0*dth)) ) }; 
 //constexpr int Nt { int(Tmax/Dt)+1 };          //時間ループ
 constexpr int Nt { 4000 };
 

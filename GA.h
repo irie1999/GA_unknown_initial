@@ -23,7 +23,7 @@ constexpr int Number_of_Generation { 50 };  /*n世代*/
 
 //constexpr int MAX_Generation { 120 };
 
-constexpr int step_km { 1 }; /*100km~900kmでstep_km間隔で観測点を置く*/
+constexpr int step_km { 10 }; /*100km~900kmでstep_km間隔で観測点を置く*/
 constexpr int GA_Nr { 801 };
 constexpr int M { 2 };
 constexpr double p_beta { 1e3 };
