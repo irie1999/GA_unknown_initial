@@ -1,5 +1,5 @@
 #include <cmath>
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 
 /* Physical constants */
 constexpr double C0 { 3.0e8 };

@@ -16,7 +16,7 @@
 #include <complex>
 #include <chrono>
 
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 
 #include "memory_allocate.h"
 #include "fdtd2d.h"
