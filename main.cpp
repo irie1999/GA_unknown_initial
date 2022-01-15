@@ -201,25 +201,25 @@ int main(int argc, char **argv){
         time[0] = 6.16667;
         time[1] = 6.33333;
         time[2] = 6.5; 
-        beta[0] = 0.70523;
-        h_prime[0] = 1.035884;
+        beta[0] = 0.493661;  
+        h_prime[0] = 77.69128;
         for(int t = 1; t < 3; t++){
-        std::cout << "beta_" + std::to_string(t) << "= " << 0.7 * ( MAX_parameter[1][Number_of_Generation - 1] * pow((time[t] - time[0]),2) + MAX_parameter[0][Number_of_Generation - 1] * (time[t] - time[0]) + beta[0] ) << std::endl
-                  << "h_prime" + std::to_string(t)  << "= " << 75 * (MAX_parameter[3][Number_of_Generation - 1] * pow((time[t] - time[0]),2) + MAX_parameter[2][Number_of_Generation - 1] * (time[t] - time[0]) + h_prime[0] ) << std::endl;
+        std::cout << "beta_" + std::to_string(t) << "= " << ( MAX_parameter[1][Number_of_Generation - 1] * pow((time[t] - time[0]),2) + MAX_parameter[0][Number_of_Generation - 1] * (time[t] - time[0]) + beta[0] ) << std::endl
+                  << "h_prime" + std::to_string(t)  << "= " << (MAX_parameter[3][Number_of_Generation - 1] * pow((time[t] - time[0]),2) + MAX_parameter[2][Number_of_Generation - 1] * (time[t] - time[0]) + h_prime[0] ) << std::endl;
         }
 
         std::ofstream ofs_1("../data/Answer,step " + std::to_string(step_km) + ",gene " + std::to_string(Number_of_Generation) + ",ind " + std::to_string(Number_of_Individual) + ".dat");
         for(int t = 1; t < 3; t++){
-            ofs_1   << "Answer beta_" + std::to_string(t) << "= " << 0.7 * ( MAX_parameter[1][Number_of_Generation - 1] * pow((time[t] - time[0]),2) + MAX_parameter[0][Number_of_Generation - 1] * (time[t] - time[0]) + beta[0] ) << std::endl
-                    << "Answer h_prime" + std::to_string(t)  << "= " << 75 * ( MAX_parameter[3][Number_of_Generation -1] * pow((time[t] - time[0]),2) + MAX_parameter[2][Number_of_Generation -1] * (time[t] - time[0]) + h_prime[0] ) << std::endl << std::endl;
+            ofs_1   << "Answer beta_" + std::to_string(t) << "= " << ( MAX_parameter[1][Number_of_Generation - 1] * pow((time[t] - time[0]),2) + MAX_parameter[0][Number_of_Generation - 1] * (time[t] - time[0]) + beta[0] ) << std::endl
+                    << "Answer h_prime" + std::to_string(t)  << "= " << ( MAX_parameter[3][Number_of_Generation -1] * pow((time[t] - time[0]),2) + MAX_parameter[2][Number_of_Generation -1] * (time[t] - time[0]) + h_prime[0] ) << std::endl << std::endl;
         }
 
         std::cout << std::endl << std::endl;
 
         for(int i = 0; i < Number_of_Generation; i++){
             for(int t = 1; t < 3; t++){
-            ofs_1   << "beta_" + std::to_string(t) << "= " << 0.7 * ( MAX_parameter[1][i] * pow((time[t] - time[0]),2) + MAX_parameter[0][i] * (time[t] - time[0]) + beta[0] ) << std::endl
-                    << "h_prime" + std::to_string(t)  << "= " << 75 * ( MAX_parameter[3][i] * pow((time[t] - time[0]),2) + MAX_parameter[2][i] * (time[t] - time[0]) + h_prime[0] ) << std::endl << std::endl;
+            ofs_1   << "beta_" + std::to_string(t) << "= " << ( MAX_parameter[1][i] * pow((time[t] - time[0]),2) + MAX_parameter[0][i] * (time[t] - time[0]) + beta[0] ) << std::endl
+                    << "h_prime" + std::to_string(t)  << "= " << ( MAX_parameter[3][i] * pow((time[t] - time[0]),2) + MAX_parameter[2][i] * (time[t] - time[0]) + h_prime[0] ) << std::endl << std::endl;
             }
         }
         ofs_1.close();
