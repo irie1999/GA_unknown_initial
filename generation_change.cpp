@@ -8,17 +8,18 @@
 
 
 double fitting(double parameter_beta_1, double parameter_beta_2, 
-            double parameter_h_prime_1, double parameter_h_prime_2, double **S, double **Ei_tm){
+            double parameter_h_prime_1, double parameter_h_prime_2, 
+            double **S, double **Ei_tm, double *time, double *beta, double *h_prime){
     double v = 0.0; /*score*/
     double **s = allocate_memory2d(3, 801, 0.0);  /*探索する個体の電界強度の変化率*/
-    double beta[3], h_prime[3];
-    double time[3];
-    //double compare_1, compare_2, compare_3;  /*評価関数の3つの部分を比較する変数*/
-    time[0] = 6.16667;
-    time[1] = 6.33333;
-    time[2] = 6.5; 
-    beta[0] = 0.493661;  /*パラメタを規格化 beta_0 = 0.7 beta[0] = beta0 / beta_0*/
-    h_prime[0] = 77.69128;  /*パラメタを規格化 h_prime0 = 75*/
+    // double beta[3], h_prime[3];
+    // double time[3];
+    // //double compare_1, compare_2, compare_3;  /*評価関数の3つの部分を比較する変数*/
+    // time[0] = 8.16667;
+    // time[1] = 8.33333;
+    // time[2] = 8.5; 
+    // beta[0] = 0.493661;  /*パラメタを規格化 beta_0 = 0.7 beta[0] = beta0 / beta_0*/
+    // h_prime[0] = 77.69128;  /*パラメタを規格化 h_prime0 = 75*/
 
     for(int t = 1; t <= 2; t++){
         beta[t] = parameter_beta_2 * pow((time[t] - time[0]), 2) + parameter_beta_1 * (time[t] - time[0]) + beta[0];
@@ -53,8 +54,10 @@ double fitting(double parameter_beta_1, double parameter_beta_2,
     return v;
 }
 
-void cal_ind(double **S, double **Ei_tm, int i, double **parameter, double *score){
-    score[i] = fitting(parameter[0][i], parameter[1][i], parameter[2][i], parameter[3][i], S, Ei_tm); 
+void cal_ind(double **S, double **Ei_tm, int i, double **parameter,
+             double *score, double *time, double *beta, double *h_prime){
+    score[i] = fitting(parameter[0][i], parameter[1][i], parameter[2][i], parameter[3][i], 
+                       S, Ei_tm, time, beta, h_prime); 
 }
 
 void create_ind(Agent *agent){
@@ -134,8 +137,10 @@ void mutate_ind(Agent *c){
     }
 }
 
-void final_cal_ind(double **S, double **Ei_tm, int i,double **parameter, double *score){
-    score[i] = fitting(parameter[0][i], parameter[1][i], parameter[2][i], parameter[3][i], S, Ei_tm); 
+void final_cal_ind(double **S, double **Ei_tm, int i,double **parameter, 
+                   double *score, double *time, double *beta, double *h_prime){
+    score[i] = fitting(parameter[0][i], parameter[1][i], parameter[2][i], parameter[3][i], 
+                        S, Ei_tm, time, beta, h_prime); 
 }
 
 void sort_ind(Agent *p){

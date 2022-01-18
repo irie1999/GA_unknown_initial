@@ -10,7 +10,7 @@ all: main
 
 
 main: $(OBJS)
-	mpic++ -o $@  $(OBJS) -O3cat 
+	mpic++ -o $@  $(OBJS) -O3
 
 %.o: %.cpp GA.h agent.h  fdtd2d.h
 	mpic++ -c $< -Wall -O3 -I/usr/include/eigen3
