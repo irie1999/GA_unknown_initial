@@ -217,7 +217,7 @@ int main(int argc, char **argv){
         /*各世代の最大値を格納*/
         MAX[Number_of_Generation - 1] = agent[PARENT][0].score;
 
-        std::ofstream ofs("../data/score,time" + std::to_string(searched_time) + ",step " + std::to_string(step_km) + "km,gene " + std::to_string(Number_of_Generation) + ",ind " + std::to_string(Number_of_Individual) + ".dat");
+        std::ofstream ofs("../data/score,time" + std::to_string(searched_time) + ",step" + std::to_string(step_km) + "km,gene" + std::to_string(Number_of_Generation) + ",ind" + std::to_string(Number_of_Individual) + ".dat");
         for(int n_generation = 0; n_generation < Number_of_Generation; n_generation++){
             ofs << n_generation << " " << MAX[n_generation] << " " << score_average[n_generation] << std::endl;
         }
@@ -239,7 +239,7 @@ int main(int argc, char **argv){
                   << "h_prime" + std::to_string(t)  << "= " << (MAX_parameter[3][Number_of_Generation - 1] * pow((time[t] - time[0]),2) + MAX_parameter[2][Number_of_Generation - 1] * (time[t] - time[0]) + h_prime[0] ) << std::endl;
         }
 
-        std::ofstream ofs_1("../data/Answer,time" + std::to_string(searched_time) + ",step " + std::to_string(step_km) + "km,gene " + std::to_string(Number_of_Generation) + ",ind " + std::to_string(Number_of_Individual) + ".dat");
+        std::ofstream ofs_1("../data/Answer,time" + std::to_string(searched_time) + ",step" + std::to_string(step_km) + "km,gene" + std::to_string(Number_of_Generation) + ",ind" + std::to_string(Number_of_Individual) + ".dat");
         for(int t = 1; t < 3; t++){
             ofs_1   << "Answer beta_" + std::to_string(t) << "= " << ( MAX_parameter[1][Number_of_Generation - 1] * pow((time[t] - time[0]),2) + MAX_parameter[0][Number_of_Generation - 1] * (time[t] - time[0]) + beta[0] ) << std::endl
                     << "Answer h_prime" + std::to_string(t)  << "= " << ( MAX_parameter[3][Number_of_Generation -1] * pow((time[t] - time[0]),2) + MAX_parameter[2][Number_of_Generation -1] * (time[t] - time[0]) + h_prime[0] ) << std::endl << std::endl;
