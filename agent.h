@@ -12,7 +12,7 @@ private:
   double parameter_beta_2_max { 0.540565 };
   double parameter_beta_2_step { (parameter_beta_2_max - parameter_beta_2_min) / (pow(2,N_bit_parameter_beta_2) - 1)};
   double parameter_h_prime_1_min { -18.9017 }; 
-  double parameter_h_prime_1_max { -18.9017 };
+  double parameter_h_prime_1_max { 18.9017 };
   double parameter_h_prime_1_step { (parameter_h_prime_1_max - parameter_h_prime_1_min) / (pow(2,N_bit_parameter_h_prime_1) - 1)};
   double parameter_h_prime_2_min { -12.6122 }; 
   double parameter_h_prime_2_max { 12.6122 };
