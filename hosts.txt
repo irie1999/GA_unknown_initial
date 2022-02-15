@@ -1,3 +1,0 @@
-ryzen1 slots=16
-ryzen2 slots=16
-ryzen3 slots=16

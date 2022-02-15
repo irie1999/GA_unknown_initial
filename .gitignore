@@ -1,9 +1,9 @@
 *.o
 *.for
-*.dat
 *.asc
 *.tgz
 *.sh
+*.txt
 fort.7
 main
 00readme.txt
