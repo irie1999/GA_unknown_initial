@@ -24,6 +24,7 @@ int main(int argc, char **argv){
     std::cout << "rank= " << rank << ", size= " << size << std::endl;
     
     double **S = allocate_memory2d(3, 801, 0.0);  /*観測した電界強度の変化率*/
+    double **Ei_tm = allocate_memory2d(3, 801, 0.0); /*個体のβとh'を与えた得られた電界強度"*/
     double **parameter = allocate_memory2d(4, Number_of_Individual, 0.0);  /*各プロセスに渡すパラメタ*/
     double score[Number_of_Individual];     /*受信するときに用いるスコア*/
     double MAX[Number_of_Generation + 1];   /*スコア最大値を格納*/
@@ -31,15 +32,118 @@ int main(int argc, char **argv){
     double score_average[Number_of_Generation + 1]; /*平均値を格納*/
     double roulette[Number_of_Individual];  /*ルーレット*/
     Agent agent[2][Number_of_Individual];   /*個体*/
+    double *beta = new double[3];
+    double *h_prime = new double[3];
+    double *time = new double[3];
+
+
+
+    ////////////////////////////////////////
+    // int searched_time = 6;
+    // time[0] = 6.16667;
+    // time[1] = 6.33333;
+    // time[2] = 6.5; 
+    // beta[0] = 0.493661;  
+    // h_prime[0] = 77.69128;  
+  
+    int searched_time = 6;
+    time[0] = 6.5;    /*6:30*/
+    time[1] = 6.6667;    /*6:40*/
+    time[2] = 6.8333;        /*6:50*/
+    beta[0] = 0.534918;   /*6:30*/
+    h_prime[0] = 76.0682; /*6:30*/
+    
+    // ////////////////////////////////////////
+    // int searched_time = 8;
+    // time[0] = 8.16667;
+    // time[1] = 8.33333;
+    // time[2] = 8.5; 
+    // beta[0] = 0.867372;  
+    // h_prime[0] = 68.451;    
+
+    // int searched_time = 8;
+    // time[0] = 8.5;
+    // time[1] = 8.66667;
+    // time[2] = 8.83333; 
+    // beta[0] = ;  
+    // h_prime[0] = ; 
+    // /////////////////////////////////////////
+    // int searched_time = 10;
+    // time[0] = 10.16667;
+    // time[1] = 10.33333;
+    // time[2] = 10.5; 
+    // beta[0] = 0.933215;  
+    // h_prime[0] = 66.2318;  
+
+    // int searched_time = 10;
+    // time[0] = 10.5;
+    // time[1] = 10.66667;
+    // time[2] = 10.83333; 
+    // beta[0] = ;  
+    // h_prime[0] = ;
+    // /////////////////////////////////////////
+    // int searched_time = 12;
+    // time[0] = 12.16667;
+    // time[1] = 12.33333;
+    // time[2] = 12.5; 
+    // beta[0] = 0.942;  
+    // h_prime[0] = 66.18679; 
+
+    // int searched_time = 12;
+    // time[0] = 12.5;
+    // time[1] = 12.66667;
+    // time[2] = 12.83333; 
+    // beta[0] = ;  
+    // h_prime[0] = ;
+    // ///////////////////////////////////////////
+    // int searched_time = 14;
+    // time[0] = 14.16667;
+    // time[1] = 14.33333;
+    // time[2] = 14.5; 
+    // beta[0] = 0.917381;  
+    // h_prime[0] = 67.5765; 
+
+    // int searched_time = 14;
+    // time[0] = 14.5;
+    // time[1] = 14.66667;
+    // time[2] = 14.83333; 
+    // beta[0] = ;  
+    // h_prime[0] = ;
+    // ////////////////////////////////////////////
+    // int searched_time = 16;
+    // time[0] = 16.16667;
+    // time[1] = 16.33333;
+    // time[2] = 16.5; 
+    // beta[0] = 0.62472;  
+    // h_prime[0] = 73.0384; 
+    // /////////////////////////////////////////////
+    // int searched_time = 18;
+    // time[0] = 18.16667;
+    // time[1] = 18.33333;
+    // time[2] = 18.5; 
+    // beta[0] = 0.522092;  
+    // h_prime[0] = 83.1044; 
+
+    // int searched_time = 18;
+    // time[0] = 18.5;
+    // time[1] = 18.66667;
+    // time[2] = 18.83333; 
+    // beta[0] = ;  
+    // h_prime[0] = ;
+    /////////////////////////////////////////////
 
     create_ind(agent[0]); /*初期ランダム遺伝子の作成*/
     
-    input(S,1);  /*t_1の時の観測した電界強度*/
-    input(S,2);  /*t_2の時の観測した電界強度*/
+    input(S, 1, "Si_tm" + std::to_string(searched_time) + ":30.dat");  /*t_1の時の観測した電界強度*/
+    input(S, 2, "Si_tm" + std::to_string(searched_time) + ":40.dat");  /*t_2の時の観測した電界強度*/
+    input(Ei_tm, 0, "Search_first_E_" + std::to_string(searched_time) +":30.dat"); /*最初の時刻の電界強度*/
+    
     
     if(rank == 0){
         std::cout << "世代= " << Number_of_Generation << std::endl
-                  << "個体= " << Number_of_Individual << std::endl;
+                  << "個体= " << Number_of_Individual << std::endl
+                  << "観測間隔= " << step_km << "km" << std::endl
+                  << "探索時間= " << searched_time << ":00" << std::endl << std::endl;
     }
     
     for(int n_generation = 0; n_generation < Number_of_Generation - 1; n_generation++){
@@ -76,7 +180,7 @@ int main(int argc, char **argv){
         
         /*スコアを計算*/
         for(int i = rank * Range; i < (rank + 1) * Range; i++){ /*全個体を各コアに分割*/
-        cal_ind(S, i, parameter, score);
+        cal_ind(S, Ei_tm, i, parameter, score, time, beta, h_prime);
         }
         
         if(rank != 0){  /*rank0にスコアを送信*/
@@ -104,6 +208,9 @@ int main(int argc, char **argv){
 
             /*各世代の最大値を格納*/
             MAX[n_generation] = agent[PARENT][0].score;
+            if(rank == 0){
+                std::cout << "最大スコア= " << MAX[n_generation] << std::endl;
+            }
 
             /*ルーレットと平均値作成*/
             compose_roulette(Number_of_Individual, agent[PARENT], roulette, score_average, n_generation);    
@@ -114,7 +221,6 @@ int main(int argc, char **argv){
             /*突然変異*/
             mutate_ind(agent[CHILD]);
         }
-        
     }
     
     ///////*最終世代の最もスコアが高いものを判断*/////////
@@ -150,7 +256,7 @@ int main(int argc, char **argv){
 
     /*スコアを計算*/
     for(int i = rank * Range; i < (rank +1) * Range; i++){
-        final_cal_ind(S, i, parameter,  score);
+        final_cal_ind(S, Ei_tm, i, parameter, score, time, beta, h_prime);
     }
 
     if(rank != 0){  /*rank0にスコアを送信*/
@@ -184,7 +290,7 @@ int main(int argc, char **argv){
         /*各世代の最大値を格納*/
         MAX[Number_of_Generation - 1] = agent[PARENT][0].score;
 
-        std::ofstream ofs("../data/score_graph_afterstepkm, " + std::to_string(step_km) + ", " + std::to_string(Number_of_Generation) + ", " + std::to_string(Number_of_Individual) + ".dat");
+        std::ofstream ofs("../data/score,time" + std::to_string(searched_time) + ":00,step" + std::to_string(step_km) + "km,gene" + std::to_string(Number_of_Generation) + ",ind" + std::to_string(Number_of_Individual) + ".dat");
         for(int n_generation = 0; n_generation < Number_of_Generation; n_generation++){
             ofs << n_generation << " " << MAX[n_generation] << " " << score_average[n_generation] << std::endl;
         }
@@ -193,27 +299,31 @@ int main(int argc, char **argv){
         std::cout << "beta_1= " << MAX_parameter[0][Number_of_Generation - 1] << " beta_2= " << MAX_parameter[1][Number_of_Generation - 1]  << " h_prime_1= " << MAX_parameter[2][Number_of_Generation - 1]  
                 << " h_prime_2= " << MAX_parameter[3][Number_of_Generation - 1] << " max= " << MAX[Number_of_Generation - 1] << std::endl;
 
-        double beta[3], h_prime[3];
-        double time[3];
-        time[0] = 6.16667;
-        time[1] = 6.33333;
-        time[2] = 6.5; 
-        beta[0] = 0.70523;
-        h_prime[0] = 1.035884;
+        // double beta[3], h_prime[3];
+        // double time[3];
+        // time[0] = 6.16667;
+        // time[1] = 6.33333;
+        // time[2] = 6.5; 
+        // beta[0] = 0.493661;  
+        // h_prime[0] = 77.69128;
+
         for(int t = 1; t < 3; t++){
-        std::cout << "beta_" + std::to_string(t) << "= " << 0.7 * ( MAX_parameter[1][Number_of_Generation - 1] * pow((time[t] - time[0]),2) + MAX_parameter[0][Number_of_Generation - 1] * (time[t] - time[0]) + beta[0] ) << std::endl
-                  << "h_prime" + std::to_string(t)  << "= " << 75 * (MAX_parameter[3][Number_of_Generation - 1] * pow((time[t] - time[0]),2) + MAX_parameter[2][Number_of_Generation - 1] * (time[t] - time[0]) + h_prime[0] ) << std::endl;
+        std::cout << "beta_" + std::to_string(t) << "= " << ( MAX_parameter[1][Number_of_Generation - 1] * pow((time[t] - time[0]),2) + MAX_parameter[0][Number_of_Generation - 1] * (time[t] - time[0]) + beta[0] ) << std::endl
+                  << "h_prime" + std::to_string(t)  << "= " << (MAX_parameter[3][Number_of_Generation - 1] * pow((time[t] - time[0]),2) + MAX_parameter[2][Number_of_Generation - 1] * (time[t] - time[0]) + h_prime[0] ) << std::endl;
         }
 
-        std::ofstream ofs_1("../data/Answer_afterstepkm, " + std::to_string(step_km) + ", " + std::to_string(Number_of_Generation) + ", " + std::to_string(Number_of_Individual) + ".dat");
+        std::ofstream ofs_1("../data/Answer,time" + std::to_string(searched_time) + ":00,step" + std::to_string(step_km) + "km,gene" + std::to_string(Number_of_Generation) + ",ind" + std::to_string(Number_of_Individual) + ".dat");
         for(int t = 1; t < 3; t++){
-            ofs_1   << "Answer beta_" + std::to_string(t) << "= " << 0.7 * ( MAX_parameter[1][Number_of_Generation - 1] * pow((time[t] - time[0]),2) + MAX_parameter[0][Number_of_Generation - 1] * (time[t] - time[0]) + beta[0] ) << std::endl
-                    << "Answer h_prime" + std::to_string(t)  << "= " << 75 * ( MAX_parameter[3][Number_of_Generation -1] * pow((time[t] - time[0]),2) + MAX_parameter[2][Number_of_Generation -1] * (time[t] - time[0]) + h_prime[0] ) << std::endl << std::endl;
+            ofs_1   << "Answer beta_" + std::to_string(t) << "= " << ( MAX_parameter[1][Number_of_Generation - 1] * pow((time[t] - time[0]),2) + MAX_parameter[0][Number_of_Generation - 1] * (time[t] - time[0]) + beta[0] ) << std::endl
+                    << "Answer h_prime" + std::to_string(t)  << "= " << ( MAX_parameter[3][Number_of_Generation -1] * pow((time[t] - time[0]),2) + MAX_parameter[2][Number_of_Generation -1] * (time[t] - time[0]) + h_prime[0] ) << std::endl << std::endl;
         }
+
+        std::cout << std::endl << std::endl;
+
         for(int i = 0; i < Number_of_Generation; i++){
             for(int t = 1; t < 3; t++){
-            ofs_1   << "Answer beta_" + std::to_string(t) << "= " << 0.7 * ( MAX_parameter[1][i] * pow((time[t] - time[0]),2) + MAX_parameter[0][i] * (time[t] - time[0]) + beta[0] ) << std::endl
-                    << "Answer h_prime" + std::to_string(t)  << "= " << 75 * ( MAX_parameter[3][i] * pow((time[t] - time[0]),2) + MAX_parameter[2][i] * (time[t] - time[0]) + h_prime[0] ) << std::endl << std::endl;
+            ofs_1   << "beta_" + std::to_string(t) << "= " << ( MAX_parameter[1][i] * pow((time[t] - time[0]),2) + MAX_parameter[0][i] * (time[t] - time[0]) + beta[0] ) << std::endl
+                    << "h_prime" + std::to_string(t)  << "= " << ( MAX_parameter[3][i] * pow((time[t] - time[0]),2) + MAX_parameter[2][i] * (time[t] - time[0]) + h_prime[0] ) << std::endl << std::endl;
             }
         }
         ofs_1.close();

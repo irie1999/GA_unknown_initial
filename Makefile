@@ -13,7 +13,7 @@ main: $(OBJS)
 	mpic++ -o $@  $(OBJS) -O3
 
 %.o: %.cpp GA.h agent.h  fdtd2d.h
-	mpic++ -c $< -Wall -O3 -I.
+	mpic++ -c $< -Wall -O3 -I/usr/include/eigen3
 
 clean:
 	rm -rf *.o main

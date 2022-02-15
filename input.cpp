@@ -3,10 +3,10 @@
 #include <cmath>
 
 #include "fdtd2d.h"
-void input(double **S, int time){
+void input(double **S, int time, std::string filename){
 	/*ファイル読み込み*/
 	std::ifstream ifs;  // ファイル読み取り用ストリーム  
-	ifs.open("../data/Si_tm_" + std::to_string(time) + ".dat");	// ファイルオープン
+	ifs.open("data/" + filename);	// ファイルオープン
 
 	if(ifs.fail()){	// ファイルオープンに失敗したらそこで終了
 		std::cerr << "ファイルを開けません\n";

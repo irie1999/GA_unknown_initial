@@ -8,7 +8,7 @@
 #include <fstream>
 #include <complex>
 #include <string>
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 
 //#include <iri2016.h>
 #include "vector3d.h"

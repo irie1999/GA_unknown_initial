@@ -8,29 +8,29 @@
 
 
 double fitting(double parameter_beta_1, double parameter_beta_2, 
-            double parameter_h_prime_1, double parameter_h_prime_2, double **S){
+            double parameter_h_prime_1, double parameter_h_prime_2, 
+            double **S, double **Ei_tm, double *time, double *beta, double *h_prime){
     double v = 0.0; /*score*/
     double **s = allocate_memory2d(3, 801, 0.0);  /*探索する個体の電界強度の変化率*/
-    double **Ei_tm = allocate_memory2d(3, 801, 0.0); /*個体のβとh'を与えた得られた電界強度"*/
-    double beta[3], h_prime[3];
-    double time[3];
-    //double compare_1, compare_2, compare_3;  /*評価関数の3つの部分を比較する変数*/
-    time[0] = 6.16667;
-    time[1] = 6.33333;
-    time[2] = 6.5; 
-    beta[0] = 0.705229;  /*パラメタを規格化 beta_0 = 0.7 beta[0] = beta0 / beta_0*/
-    h_prime[0] = 1.035884;  /*パラメタを規格化 h_prime0 = 75*/
+    // double beta[3], h_prime[3];
+    // double time[3];
+    // //double compare_1, compare_2, compare_3;  /*評価関数の3つの部分を比較する変数*/
+    // time[0] = 8.16667;
+    // time[1] = 8.33333;
+    // time[2] = 8.5; 
+    // beta[0] = 0.493661;  /*パラメタを規格化 beta_0 = 0.7 beta[0] = beta0 / beta_0*/
+    // h_prime[0] = 77.69128;  /*パラメタを規格化 h_prime0 = 75*/
 
-    for(int t = 0; t <= 2; t++){
+    for(int t = 1; t <= 2; t++){
         beta[t] = parameter_beta_2 * pow((time[t] - time[0]), 2) + parameter_beta_1 * (time[t] - time[0]) + beta[0];
         h_prime[t] = parameter_h_prime_2 * pow((time[t] - time[0]), 2) + parameter_h_prime_1 * (time[t] - time[0]) + h_prime[0];
-        cal_fdtd(0.7 * beta[t], 75.0 * h_prime[t] * 1e3, t, Ei_tm); /*betaとh'を代入して電界を返す*/
+        cal_fdtd(beta[t], h_prime[t] * 1e3, t, Ei_tm); /*betaとh'を代入して電界を返す*/
     }
     
     //double sum;
     // ////////////////*100km~900kmのstep_km毎に観測点を設置*/////////////////////
     for(int t_m = 1; t_m <= M; t_m++){
-        for(int i = 0; i < GA_Nr; i = i + step_km){ 
+        for(int i = 0; i < 801; i = i + step_km){ 
             s[t_m][i] = (Ei_tm[t_m][i] - Ei_tm[t_m - 1][i]) / (time[t_m] - time[t_m -1]);
 
             v += std::pow(std::abs( S[t_m][i] - s[t_m][i] ), 2);
@@ -47,15 +47,17 @@ double fitting(double parameter_beta_1, double parameter_beta_2,
     // ofs.close();
 
     deallocate_memory2d(s);
-    deallocate_memory2d(Ei_tm);
+    
 
     v = GA_Nr * M / v;
 
     return v;
 }
 
-void cal_ind(double **S, int i, double **parameter, double *score){
-    score[i] = fitting(parameter[0][i], parameter[1][i], parameter[2][i], parameter[3][i], S); 
+void cal_ind(double **S, double **Ei_tm, int i, double **parameter,
+             double *score, double *time, double *beta, double *h_prime){
+    score[i] = fitting(parameter[0][i], parameter[1][i], parameter[2][i], parameter[3][i], 
+                       S, Ei_tm, time, beta, h_prime); 
 }
 
 void create_ind(Agent *agent){
@@ -135,8 +137,10 @@ void mutate_ind(Agent *c){
     }
 }
 
-void final_cal_ind(double **S, int i,double **parameter, double *score){
-    score[i] = fitting(parameter[0][i], parameter[1][i], parameter[2][i], parameter[3][i], S); 
+void final_cal_ind(double **S, double **Ei_tm, int i,double **parameter, 
+                   double *score, double *time, double *beta, double *h_prime){
+    score[i] = fitting(parameter[0][i], parameter[1][i], parameter[2][i], parameter[3][i], 
+                        S, Ei_tm, time, beta, h_prime); 
 }
 
 void sort_ind(Agent *p){
