@@ -1,5 +1,3 @@
-data/
-fdtd/
 *.o
 *.for
 *.dat
