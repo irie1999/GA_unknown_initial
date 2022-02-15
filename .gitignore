@@ -3,6 +3,7 @@
 *.dat
 *.asc
 *.tgz
+*.sh
 fort.7
 main
 00readme.txt
